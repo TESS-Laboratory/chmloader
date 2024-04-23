@@ -53,4 +53,9 @@ terra::plot(sdb_chm,
 )
 ```
 
-This package has only the one
+This package has only the one function `download_chm` which downloads the CHM
+data from the aws s3 storage. The function takes a `sf` object as input and
+returns a character vector for the output raster file path. The download uses
+gdalwarp (via `sf::gdal_utils`) to efficiently retrieve only the required data 
+from across multiple tiles - the default resolution is 1 m but this can be 
+reprojected on the fly as needed. 
