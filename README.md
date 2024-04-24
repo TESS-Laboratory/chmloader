@@ -37,7 +37,7 @@ library(chmloader)
 
 sundarbans <- sf::st_point(c(89.2, 22.0)) |>
   sf::st_sfc(crs = 4326) |>
-  sf::st_buffer(7000)
+  sf::st_buffer(6000)
 
 sundarbans_chm <- download_chm(
   sundarbans,
