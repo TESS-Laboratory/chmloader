@@ -35,7 +35,16 @@ download_chm(
 character, the path to the downloaded CHM data
 }
 \description{
+Download Canopy Height Model (CHM) data
+Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.
+}
+\details{
 for more information check out: https://registry.opendata.aws/dataforgood-fb-forests/
+If the target sf object is provided in longlat, it will be transformed to
+EPSG:3857 (Web Mercator) before downloading the CHM data. This is in part
+because the data is provided in Web Mercator and because calcuating the
+correct resolution of the data is made simpler when using a projected
+coordinate system.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
