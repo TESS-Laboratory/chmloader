@@ -31,7 +31,8 @@ download_chm <- function(
       "-overwrite",
       "-co", "COMPRESS=DEFLATE",
       "-co", "PREDICTOR=2",
-      "-co", "NUM_THREADS=ALL_CPUS"
+      "-co", "NUM_THREADS=ALL_CPUS",
+      "-of", "COG"
     ),
     gdal_config_options = c(
       VSI_CACHE = "TRUE",
@@ -42,10 +43,14 @@ download_chm <- function(
       GDAL_DISABLE_READDIR_ON_OPEN = "EMPTY_DIR",
       GDAL_HTTP_VERSION = "2",
       GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = "YES",
-      GDAL_NUM_THREADS = "ALL_CPUS"
+      GDAL_NUM_THREADS = "ALL_CPUS",
+      AWS_NO_SIGN_REQUEST = "YES"
     )) {
-  checkmate::assert_multi_class(target, c("sf", "sfc"))
+  chml_assert_class(target, c("sf", "sfc"))
+
   chm <- rlang::arg_match(chm)
+
+  check_existing_cog(filename, gdalwarp_options)
 
   if (sf::st_is_longlat(target)) {
     target <- sf::st_transform(target, 3857)
@@ -54,5 +59,8 @@ download_chm <- function(
 
   srcs <- build_chm_srcs(target)
 
-  warp_util(srcs, target, 1, filename, gdalwarp_options, gdal_config_options)
+  warp_util(
+    srcs, target, res, filename,
+    gdalwarp_options, gdal_config_options
+  )
 }
