@@ -23,7 +23,7 @@
 #' @return character, the path to the downloaded CHM data
 #' @export
 download_chm <- function(
-    target, chm = "tolan", res = 1,
+    target, chm = "tolan", res = NULL,
     filename = paste0(proceduralnames::make_english_names(1), ".tif"),
     gdalwarp_options = c(
       "-r", "bilinear",
@@ -46,14 +46,14 @@ download_chm <- function(
       GDAL_NUM_THREADS = "ALL_CPUS",
       AWS_NO_SIGN_REQUEST = "YES"
     )) {
-  chml_assert_class(target, c("sf", "sfc"))
+  chml_assert_class(target, c("sf", "sfc", "SpatVector", "SpatRaster"))
 
   chm <- rlang::arg_match(chm)
 
   check_existing_cog(filename, gdalwarp_options)
 
   if (sf::st_is_longlat(target)) {
-    target <- sf::st_transform(target, 3857)
+    target <- proj_to_web_merc(target)
     cli::cli_warn(c("!" = "target is in longlat, transforming to EPSG:3857"))
   }
 

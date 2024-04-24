@@ -4,12 +4,7 @@
 #' @noRd
 #' @keywords internal
 build_chm_srcs <- function(target) {
-  target_corners <- sf::st_transform(target, 4326) |>
-    sf::st_transform(4326) |>
-    sf::st_bbox() |>
-    sf::st_as_sfc() |>
-    sf::st_coordinates() |>
-    as.data.frame()
+  target_corners <- get_spat_corners(target)
 
   kuam_cent_qk <- quadkeyr::latlong_to_quadkey(
     lat = target_corners$Y, lon = target_corners$X, zoom = 9
