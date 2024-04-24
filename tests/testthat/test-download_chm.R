@@ -60,3 +60,19 @@ test_that("error wrong class", {
     )
   )
 })
+
+
+# test_that("download_chm with raster works", {
+#   skip_on_cran()
+#   skip_if_offline()
+
+#   # Create a SpatRaster
+#   r <- terra::rast(terra::ext(15, 15.001, -1, -0.999),
+#     res = 1, crs = "EPSG:4326"
+#   ) |>
+#     terra::project("EPSG:3857")
+#   terra::values(r) <- 1:terra::ncell(r)
+#   terra::plot(r)
+
+#   x <- download_chm(r, filename = tempfile(fileext = ".tif"))
+# })
