@@ -55,9 +55,7 @@ cli::test_that_cli("cogs are deleted", {
 
 test_that("error wrong class", {
   testthat::expect_error(
-    download_chm(terra::vect(),
-      filename = tempfile(fileext = ".tif")
-    )
+    download_chm(2)
   )
 })
 
