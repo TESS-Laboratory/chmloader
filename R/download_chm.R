@@ -44,7 +44,7 @@ download_chm <- function(
 
   if (sf::st_is_longlat(target)) {
     target <- sf::st_transform(target, 3857)
-    cli::cli_warn("target is in longlat, transforming to EPSG:3857")
+    cli::cli_warn(c("!" = "target is in longlat, transforming to EPSG:3857"))
   }
 
   srcs <- build_chm_srcs(target)
