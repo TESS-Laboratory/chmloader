@@ -37,14 +37,16 @@ library(chmloader)
 
 sundarbans <- sf::st_point(c(89.2, 22.0)) |>
   sf::st_sfc(crs = 4326) |>
-  sf::st_buffer(5000)
+  sf::st_buffer(7000)
 
-sundarbans_chm <- download_chm(sundarbans, filename = "sundarbans_chm.tif")
-#> Warning: ! target is in longlat, transforming to EPSG:3857
+sundarbans_chm <- download_chm(
+  sundarbans,
+  filename = tempfile(fileext = ".tif")
+)
 
 sdb_chm <- terra::rast(sundarbans_chm)
 terra::plot(sdb_chm,
-  col = hcl.colors(256, "Dark Mint", rev = TRUE)
+  col = hcl.colors(256, "Greens 3", rev = TRUE)
 )
 ```
 

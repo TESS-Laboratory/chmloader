@@ -39,18 +39,21 @@ pak::pkg_install("Permian-Global-Research/chmloader")
 
 This is a basic example which shows you how to download some data:
 
-```{r example}
+```{r example, warning=FALSE}
 library(chmloader)
 
 sundarbans <- sf::st_point(c(89.2, 22.0)) |>
   sf::st_sfc(crs = 4326) |>
-  sf::st_buffer(5000)
+  sf::st_buffer(7000)
 
-sundarbans_chm <- download_chm(sundarbans, filename = "sundarbans_chm.tif")
+sundarbans_chm <- download_chm(
+  sundarbans,
+  filename = tempfile(fileext = ".tif")
+)
 
 sdb_chm <- terra::rast(sundarbans_chm)
 terra::plot(sdb_chm,
-  col = hcl.colors(256, "Dark Mint", rev = TRUE)
+  col = hcl.colors(256, "Greens 3", rev = TRUE)
 )
 ```
 
