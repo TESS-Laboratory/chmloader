@@ -16,10 +16,13 @@ knitr::opts_chunk$set(
 # chmloader
 
 <!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of chmloader is to download the Canopy Height Model (CHM) data from 
-this recent work by [Tolan et al. (2023)](https://research.facebook.com/blog/2023/4/every-tree-counts-large-scale-mapping-of-canopy-height-at-the-resolution-of-individual-trees/)
+this recent work by [Tolan et al. (2023)](https://www.sciencedirect.com/science/article/pii/S003442572300439X). 
+A high level summary of this work can be found [here](https://sustainability.fb.com/blog/2024/04/22/using-artificial-intelligence-to-map-the-earths-forests/).
 The data is downloaded from aws s3 storage - further details on the bucket can
 be found [here](https://registry.opendata.aws/dataforgood-fb-forests/)
 
@@ -28,7 +31,8 @@ be found [here](https://registry.opendata.aws/dataforgood-fb-forests/)
 You can install the development version of chmloader like so:
 
 ``` r
-pak::pkg_install("chmloader")
+# install.packages("pak")
+pak::pkg_install("Permian-Global-Research/chmloader")
 ```
 
 ## Example
@@ -42,20 +46,19 @@ sundarbans <- sf::st_point(c(89.2, 22.0)) |>
   sf::st_sfc(crs = 4326) |>
   sf::st_buffer(5000)
 
-st <- Sys.time()
-sundarbans_chm <- download_chm(sundarbans)
-round(difftime(Sys.time(), st, units = "secs"))
+sundarbans_chm <- download_chm(sundarbans, filename = "sundarbans_chm.tif")
 
 sdb_chm <- terra::rast(sundarbans_chm)
-sdb_chm[sdb_chm < 1] <- NA
 terra::plot(sdb_chm,
-  col = hcl.colors(256, "viridis")
+  col = hcl.colors(256, "Dark Mint", rev = TRUE)
 )
 ```
 
-This package has only the one function `download_chm` which downloads the CHM
-data from the aws s3 storage. The function takes a `sf` object as input and
+This package has only the one exported function `download_chm` which downloads the CHM
+data from s3 bucket. The function takes an `sf` object as input and
 returns a character vector for the output raster file path. The download uses
-gdalwarp (via `sf::gdal_utils`) to efficiently retrieve only the required data 
-from across multiple tiles - the default resolution is 1 m but this can be 
-reprojected on the fly as needed. 
+[gdalwarp](https://gdal.org/programs/gdalwarp.html) (via 
+[`sf::gdal_utils`](https://r-spatial.github.io/sf/reference/gdal_utils.html)) to 
+efficiently retrieve only the required data  from across multiple tiles - the 
+default resolution is 1 m but this can be reprojected on the fly as needed using 
+the `res` argument. 

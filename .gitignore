@@ -6,5 +6,7 @@
 
 *.tif
 *.geojson
+*.aux.xml
 
 DEV/*
+README.html
