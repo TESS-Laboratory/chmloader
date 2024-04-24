@@ -1,3 +1,12 @@
+#' A gdalwarp utility function
+#' @param srcs character, the source files to warp
+#' @param target sf or sfc object, the target area to warp to
+#' @param res numeric, the resolution of the target area
+#' @param filename character, the filename to save the warped data to
+#' @param gdalwarp_options character, the options to pass to gdalwarp
+#' @param gdal_config_options character, the options to pass to gdal_config
+#' @noRd
+#' @keywords internal
 warp_util <- function(
     srcs,
     target,
@@ -5,14 +14,17 @@ warp_util <- function(
     filename,
     gdalwarp_options,
     gdal_config_options) {
-  Sys.setenv(AWS_NO_SIGN_REQUEST = "YES")
-
   bbox <- sf::st_bbox(target) |>
     round_bbox(res)
 
   te_srs <- sf::st_crs(target)$wkt
 
-  gdalwarp_options <- c(gdalwarp_options, "-te", bbox, "-t_srs", te_srs)
+  gdalwarp_options <- c(
+    gdalwarp_options,
+    "-te", bbox,
+    "-t_srs", te_srs,
+    "-tr", res, res
+  )
 
   sf::gdal_utils("warp", srcs, filename,
     options = gdalwarp_options, config = gdal_config_options,
