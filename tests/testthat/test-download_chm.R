@@ -1,4 +1,7 @@
 test_that("download_chm works", {
+  skip_on_cran()
+  skip_if_offline()
+
   gabon <- sf::st_point(c(9.5, -0.33)) |>
     sf::st_sfc(crs = 4326) |>
     sf::st_buffer(200) |>
@@ -17,9 +20,43 @@ test_that("download_chm works", {
 })
 
 test_that("download_chm warning on lonlat", {
+  skip_on_cran()
+  skip_if_offline()
   gabon <- sf::st_point(c(9.5, -0.33)) |>
     sf::st_sfc(crs = 4326) |>
-    sf::st_buffer(200)
+    sf::st_buffer(50)
 
   expect_warning(download_chm(gabon, filename = tempfile(fileext = ".tif")))
+})
+
+cli::test_that_cli("cogs are deleted", {
+  skip_on_cran()
+  skip_if_offline()
+  gabon <- sf::st_point(c(9.5, -0.33)) |>
+    sf::st_sfc(crs = 4326) |>
+    sf::st_buffer(50) |>
+    sf::st_transform(3857)
+
+  filename <- tempfile(fileext = ".tif")
+
+  fp <- download_chm(
+    gabon,
+    filename = filename
+  )
+
+  testthat::expect_snapshot({
+    fp <- download_chm(
+      gabon,
+      filename = filename
+    )
+  })
+})
+
+
+test_that("error wrong class", {
+  testthat::expect_error(
+    download_chm(terra::vect(),
+      filename = tempfile(fileext = ".tif")
+    )
+  )
 })
