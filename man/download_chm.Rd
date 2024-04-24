@@ -8,7 +8,7 @@ Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.}
 download_chm(
   target,
   chm = "tolan",
-  res = 1,
+  res = NULL,
   filename = paste0(proceduralnames::make_english_names(1), ".tif"),
   gdalwarp_options = c("-r", "bilinear", "-multi", "-overwrite", "-co",
     "COMPRESS=DEFLATE", "-co", "PREDICTOR=2", "-co", "NUM_THREADS=ALL_CPUS", "-of",
