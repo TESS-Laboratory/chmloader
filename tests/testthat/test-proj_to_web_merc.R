@@ -1,0 +1,12 @@
+test_that("proj_to_web_merc works", {
+  vf <- system.file("ex/lux.shp", package = "terra")
+  vr <- system.file("ex/elev.tif", package = "terra")
+  vf_sf <- sf::read_sf(vf)
+  vf_sfc <- sf::st_geometry(vf_sf)
+  vf_vect <- terra::vect(vf)
+  vf_rast <- terra::rast(vr)
+  expect_equal(sf::st_crs(proj_to_web_merc(vf_sf))$epsg, 3857)
+  expect_equal(sf::st_crs(proj_to_web_merc(vf_sfc))$epsg, 3857)
+  expect_equal(sf::st_crs(proj_to_web_merc(vf_vect))$epsg, 3857)
+  expect_equal(sf::st_crs(proj_to_web_merc(vf_rast))$epsg, 3857)
+})
