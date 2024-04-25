@@ -20,6 +20,7 @@ Imports:
     sf,
     terra
 Suggests: 
+    curl,
     grDevices,
     testthat (>= 3.0.0)
 Remotes: 
