@@ -60,17 +60,24 @@ test_that("error wrong class", {
 })
 
 
-# test_that("download_chm with raster works", {
-#   skip_on_cran()
-#   skip_if_offline()
+test_that("download_chm with raster works", {
+  skip_on_cran()
+  skip_if_offline()
 
-#   # Create a SpatRaster
-#   r <- terra::rast(terra::ext(15, 15.001, -1, -0.999),
-#     res = 1, crs = "EPSG:4326"
-#   ) |>
-#     terra::project("EPSG:3857")
-#   terra::values(r) <- 1:terra::ncell(r)
-#   terra::plot(r)
+  # Create a SpatRaster
+  gabon <- sf::st_point(c(9.5, -0.33)) |>
+    sf::st_sfc(crs = 4326) |>
+    sf::st_buffer(200) |>
+    sf::st_transform(3857) |>
+    terra::vect() |>
+    terra::rast(res = 10.3)
 
-#   x <- download_chm(r, filename = tempfile(fileext = ".tif"))
-# })
+  x1 <- download_chm(gabon, filename = tempfile(fileext = ".tif")) |>
+    terra::rast()
+  expect_equal(terra::res(x1)[1], 10.3)
+
+  x2 <- download_chm(gabon, res = 1, filename = tempfile(fileext = ".tif")) |>
+    terra::rast()
+
+  expect_equal(terra::res(x2)[1], 1)
+})
