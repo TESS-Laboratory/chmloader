@@ -29,7 +29,7 @@ test_that("download_chm warning on lonlat", {
   expect_warning(download_chm(gabon, filename = tempfile(fileext = ".tif")))
 })
 
-cli::test_that_cli("cogs are deleted", {
+test_that("cogs are deleted", {
   skip_on_cran()
   skip_if_offline()
   gabon <- sf::st_point(c(9.5, -0.33)) |>
@@ -44,7 +44,7 @@ cli::test_that_cli("cogs are deleted", {
     filename = filename
   )
 
-  testthat::expect_snapshot({
+  testthat::expect_warning({
     fp <- download_chm(
       gabon,
       filename = filename
