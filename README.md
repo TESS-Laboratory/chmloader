@@ -46,7 +46,7 @@ sundarbans_chm <- download_chm(
 
 sdb_chm <- terra::rast(sundarbans_chm)
 terra::plot(sdb_chm,
-  col = hcl.colors(256, "Greens 3", rev = TRUE)
+  col = hcl.colors(256, "mako")
 )
 ```
 
