@@ -22,7 +22,177 @@ round_nearest <- function(x, accuracy, f = round) {
 #' @noRd
 #' @keywords internal
 round_bbox <- function(.box, .res) {
-  big <- round_nearest(.box[c(2, 4)], .res, f = ceiling)
-  small <- round_nearest(.box[c(1, 3)], .res, f = floor)
-  c(small[1], big[1], small[2], big[2])
+  big <- round_nearest(.box[c(3, 4)], .res, f = ceiling)
+  small <- round_nearest(.box[c(1, 2)], .res, f = floor)
+  c(small, big)
+}
+
+
+#' Get Spatial Projection
+#'
+#' A class agnostic function to return the projection of a spatial object or
+#' source. returned projection uses wkt format.
+#'
+#' @param x A spatial object, file path or source
+#' @return A character - WKT projection string.
+#'
+#' @noRd
+#' @keywords internalq
+get_proj <- function(x) {
+  UseMethod("get_proj")
+}
+
+
+#'
+#' @export
+get_proj.SpatRaster <- function(x) {
+  terra::crs(x)
+}
+
+
+#' @export
+get_proj.SpatVector <- function(x) {
+  terra::crs(x)
+}
+
+
+#' @export
+get_proj.sf <- function(x) {
+  sf::st_crs(x)$wkt
+}
+
+
+#' @export
+get_proj.sfc <- function(x) {
+  sf::st_crs(x)$wkt
+}
+
+
+
+#' Get spatial extent
+#'
+#' A class agnostic function to return the bounding extent (i.e. bounding box)
+#' of a spatial object.
+#'
+#' @param x A spatial object, file path or source
+#' @return A numeric vector of length 4. Values are returned as:
+#' "xmin", "xmax", "ymin", "ymax"
+#' @noRd
+#' @keywords internal
+get_ext <- function(x) {
+  UseMethod("get_ext")
+}
+
+#' @export
+get_ext.SpatRaster <- function(x) {
+  as.vector(terra::ext(x))[c(1, 3, 2, 4)]
+}
+
+#' @export
+get_ext.SpatVector <- function(x) {
+  as.vector(terra::ext(x))[c(1, 3, 2, 4)]
+}
+
+#' @export
+get_ext.sf <- function(x) {
+  sf_ext_method(x)
+}
+
+#' @export
+get_ext.sfc <- function(x) {
+  sf_ext_method(x)
+}
+
+sf_ext_method <- function(x) {
+  x <- as.numeric(sf::st_bbox(x))
+  names(x) <- c("xmin", "ymin", "xmax", "ymax")
+  x
+}
+
+#' reproject to EPSG:3857 (Web Mercator)
+#' @param x A spatial object
+#' @return A spatial object in EPSG:3857
+#' @noRd
+#' @keywords internal
+proj_to_web_merc <- function(x) {
+  UseMethod("proj_to_web_merc")
+}
+
+#' @export
+proj_to_web_merc.SpatRaster <- function(x) {
+  terra::project(x, "EPSG:3857")
+}
+
+#' @export
+proj_to_web_merc.SpatVector <- function(x) {
+  terra::project(x, "EPSG:3857")
+}
+
+#' @export
+proj_to_web_merc.sf <- function(x) {
+  sf::st_transform(x, 3857)
+}
+
+#' @export
+proj_to_web_merc.sfc <- function(x) {
+  sf::st_transform(x, 3857)
+}
+
+#' get bounding box corner coordinates
+#' @param x A spatial object
+#' @return a dataframe with the corner coordinates
+#' @noRd
+#' @keywords internal
+get_spat_corners <- function(x) {
+  UseMethod("get_spat_corners")
+}
+
+#' @export
+get_spat_corners.SpatRaster <- function(x) {
+  terra_corner_method(x)
+}
+
+#' @export
+get_spat_corners.SpatVector <- function(x) {
+  terra_corner_method(x)
+}
+
+#' @export
+get_spat_corners.sf <- function(x) {
+  sf_corner_method(x)
+}
+
+#' @export
+get_spat_corners.sfc <- function(x) {
+  sf_corner_method(x)
+}
+
+#' extract corners from an sf object
+#' @param x an sf or sfc object
+#' @return a dataframe with the corner coordinates
+#' @noRd
+#' @keywords internal
+sf_corner_method <- function(x) {
+  x <- sf::st_transform(x, 4326) |>
+    sf::st_bbox() |>
+    sf::st_as_sfc() |>
+    sf::st_coordinates() |>
+    as.data.frame()
+  x[c("X", "Y")]
+}
+
+#' extract corners from a terra object
+#' @param x a SpatVector or SpatRaster object
+#' @return a dataframe with the corner coordinates
+#' @noRd
+#' @keywords internal
+terra_corner_method <- function(x) {
+  x <- terra::project(x, "EPSG:4326") |>
+    terra::ext() |>
+    terra::vect()
+  x <- terra::geom(x, df = TRUE)[, c("x", "y")]
+  colnames(x) <- c("X", "Y")
+  x <- x[nrow(x):1, ]
+  rownames(x) <- NULL
+  x
 }

@@ -17,10 +17,11 @@ Imports:
     proceduralnames,
     quadkeyr (>= 0.1.0),
     rlang,
-    sf
+    sf,
+    terra
 Suggests: 
+    curl,
     grDevices,
-    terra,
     testthat (>= 3.0.0)
 Remotes: 
     ropensci/quadkeyr

@@ -29,7 +29,7 @@ test_that("download_chm warning on lonlat", {
   expect_warning(download_chm(gabon, filename = tempfile(fileext = ".tif")))
 })
 
-cli::test_that_cli("cogs are deleted", {
+test_that("cogs are deleted", {
   skip_on_cran()
   skip_if_offline()
   gabon <- sf::st_point(c(9.5, -0.33)) |>
@@ -44,7 +44,7 @@ cli::test_that_cli("cogs are deleted", {
     filename = filename
   )
 
-  testthat::expect_snapshot({
+  testthat::expect_warning({
     fp <- download_chm(
       gabon,
       filename = filename
@@ -55,8 +55,29 @@ cli::test_that_cli("cogs are deleted", {
 
 test_that("error wrong class", {
   testthat::expect_error(
-    download_chm(terra::vect(),
-      filename = tempfile(fileext = ".tif")
-    )
+    download_chm(2)
   )
+})
+
+
+test_that("download_chm with raster works", {
+  skip_on_cran()
+  skip_if_offline()
+
+  # Create a SpatRaster
+  gabon <- sf::st_point(c(9.5, -0.33)) |>
+    sf::st_sfc(crs = 4326) |>
+    sf::st_buffer(200) |>
+    sf::st_transform(3857) |>
+    terra::vect() |>
+    terra::rast(res = 10.3)
+
+  x1 <- download_chm(gabon, filename = tempfile(fileext = ".tif")) |>
+    terra::rast()
+  expect_equal(terra::res(x1)[1], 10.3)
+
+  x2 <- download_chm(gabon, res = 1, filename = tempfile(fileext = ".tif")) |>
+    terra::rast()
+
+  expect_equal(terra::res(x2)[1], 1)
 })

@@ -8,7 +8,7 @@ Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.}
 download_chm(
   target,
   chm = "tolan",
-  res = 1,
+  res = NULL,
   filename = paste0(proceduralnames::make_english_names(1), ".tif"),
   gdalwarp_options = c("-r", "bilinear", "-multi", "-overwrite", "-co",
     "COMPRESS=DEFLATE", "-co", "PREDICTOR=2", "-co", "NUM_THREADS=ALL_CPUS", "-of",
@@ -25,7 +25,7 @@ download_chm(
 
 \item{chm}{character, the CHM dataset to download, for now this must be "tolan"}
 
-\item{res}{numeric, the resolution of the CHM data to download in meters}
+\item{res}{numeric, the resolution of the CHM data to download in meters. see details}
 
 \item{filename}{character, the filename to save the downloaded CHM data to}
 
@@ -47,6 +47,12 @@ EPSG:3857 (Web Mercator) before downloading the CHM data. This is in part
 because the data is provided in Web Mercator and because calcuating the
 correct resolution of the data is made simpler when using a projected
 coordinate system.
+
+When the \code{res} argument is NULL (the default), the CHM resolution will be 1
+meter if the target is a spatial vector (either sf, sfc or SpatVector. If
+the target is a SpatRaster object, the resolution will be the same as the
+target raster. If the \code{res} argument is provided, the CHM data will be
+resampled to the requested resolution.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

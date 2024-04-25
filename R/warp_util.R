@@ -14,16 +14,28 @@ warp_util <- function(
     filename,
     gdalwarp_options,
     gdal_config_options) {
-  bbox <- sf::st_bbox(target) |>
-    round_bbox(res)
+  if (is.null(res)) {
+    if (inherits(target, "SpatRaster")) {
+      res <- terra::res(target)
+      bbox <- get_ext(target)
+    } else {
+      res <- c(1, 1)
+      bbox <- get_ext(target) |>
+        round_bbox(res[1])
+    }
+  } else {
+    bbox <- get_ext(target) |>
+      round_bbox(res)
+    res <- c(res, res)
+  }
 
-  te_srs <- sf::st_crs(target)$wkt
+  te_srs <- get_proj(target)
 
   gdalwarp_options <- c(
     gdalwarp_options,
     "-te", bbox,
     "-t_srs", te_srs,
-    "-tr", res, res
+    "-tr", res
   )
 
   sf::gdal_utils("warp", srcs, filename,

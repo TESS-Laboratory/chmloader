@@ -2,7 +2,7 @@
 #' Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.
 #' @param target sf or sfc object, the target area to download CHM data for
 #' @param chm character, the CHM dataset to download, for now this must be "tolan"
-#' @param res numeric, the resolution of the CHM data to download in meters
+#' @param res numeric, the resolution of the CHM data to download in meters. see details
 #' @param filename character, the filename to save the downloaded CHM data to
 #' @param gdalwarp_options character, the options to pass to gdalwarp
 #' @param gdal_config_options character, the options to pass to gdal_config
@@ -20,10 +20,17 @@
 #' because the data is provided in Web Mercator and because calcuating the
 #' correct resolution of the data is made simpler when using a projected
 #' coordinate system.
+#'
+#' When the `res` argument is NULL (the default), the CHM resolution will be 1
+#' meter if the target is a spatial vector (either sf, sfc or SpatVector. If
+#' the target is a SpatRaster object, the resolution will be the same as the
+#' target raster. If the `res` argument is provided, the CHM data will be
+#' resampled to the requested resolution.
+#'
 #' @return character, the path to the downloaded CHM data
 #' @export
 download_chm <- function(
-    target, chm = "tolan", res = 1,
+    target, chm = "tolan", res = NULL,
     filename = paste0(proceduralnames::make_english_names(1), ".tif"),
     gdalwarp_options = c(
       "-r", "bilinear",
@@ -46,14 +53,14 @@ download_chm <- function(
       GDAL_NUM_THREADS = "ALL_CPUS",
       AWS_NO_SIGN_REQUEST = "YES"
     )) {
-  chml_assert_class(target, c("sf", "sfc"))
+  chml_assert_class(target, c("sf", "sfc", "SpatVector", "SpatRaster"))
 
   chm <- rlang::arg_match(chm)
 
   check_existing_cog(filename, gdalwarp_options)
 
   if (sf::st_is_longlat(target)) {
-    target <- sf::st_transform(target, 3857)
+    target <- proj_to_web_merc(target)
     cli::cli_warn(c("!" = "target is in longlat, transforming to EPSG:3857"))
   }
 
