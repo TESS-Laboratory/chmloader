@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of chmloader is to download the Canopy Height Model (CHM) data from 
-this recent work by [Tolan et al. (2023)](https://www.sciencedirect.com/science/article/pii/S003442572300439X). 
+this recent work by [Tolan et al. (2024)](https://www.sciencedirect.com/science/article/pii/S003442572300439X). 
 A high level summary of this work can be found [here](https://sustainability.fb.com/blog/2024/04/22/using-artificial-intelligence-to-map-the-earths-forests/).
 The data is downloaded from aws s3 storage - further details on the bucket can
 be found [here](https://registry.opendata.aws/dataforgood-fb-forests/)
@@ -52,9 +52,7 @@ sundarbans_chm <- download_chm(
 )
 
 sdb_chm <- terra::rast(sundarbans_chm)
-terra::plot(sdb_chm,
-  col = hcl.colors(256, "mako")
-)
+terra::plot(sdb_chm, col = hcl.colors(256, "mako", rev = TRUE))
 ```
 
 This package has only the one exported function `download_chm` which downloads the CHM
