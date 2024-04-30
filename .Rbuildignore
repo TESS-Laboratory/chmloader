@@ -4,3 +4,6 @@
 ^LICENSE\.md$
 ^DEV
 ^\.github$
+^data-raw$
+^\.tif$
+^\.png$
