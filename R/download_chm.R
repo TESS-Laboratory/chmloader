@@ -66,8 +66,15 @@ download_chm <- function(
 
   srcs <- build_chm_srcs(target)
 
-  warp_util(
+  r <- warp_util(
     srcs, target, res, filename,
     gdalwarp_options, gdal_config_options
   )
+
+  r <- switch(getOption("chmloader.out_raster_type"),
+    character = r,
+    SpatRaster = terra::rast(r),
+    r
+  )
+  return(r)
 }
