@@ -25,7 +25,7 @@ You can install the development version of chmloader like so:
 
 ``` r
 # install.packages("pak")
-pak::pkg_install("Permian-Global-Research/chmloader")
+pak::pkg_install("TESS-Laboratory/chmloader")
 ```
 
 ## Example
