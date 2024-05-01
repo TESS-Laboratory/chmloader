@@ -70,15 +70,9 @@ fingle_woods <- reference_data("fingle_woods")
 compare_models(fingle_woods, aggregate = 10, drop_zeros = TRUE)
 #> ℹ meta/WRI CHM not provided, downloading now...
 #> ✔ CHM downloaded successfully!
-#> [[1]]
 ```
 
-<img src="man/figures/README-example2-1.png" width="100%" />
-
-    #> 
-    #> [[2]]
-
-<img src="man/figures/README-example2-2.png" width="100%" />
+<img src="man/figures/README-example2-1.png" width="100%" /><img src="man/figures/README-example2-2.png" width="100%" />
 
 Note in this example, the `aggregate` argument is used to reduce the
 resolution of both the refernce and Meta/WRI CHM by a factor of 10
