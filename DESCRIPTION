@@ -32,3 +32,5 @@ Suggests:
 Remotes: 
     ropensci/quadkeyr
 Config/testthat/edition: 3
+Config/testthat/parallel: true
+
