@@ -25,6 +25,7 @@ Imports:
     terra,
     tidyr
 Suggests: 
+    covr,
     curl,
     grDevices,
     testthat (>= 3.0.0)
