@@ -13,12 +13,17 @@ URL: https://github.com/Permian-Global-Research/chmloader
 BugReports: https://github.com/Permian-Global-Research/chmloader/issues
 Imports: 
     cli,
+    dplyr,
+    ggplot2,
     glue,
+    patchwork,
     proceduralnames,
+    purrr,
     quadkeyr (>= 0.1.0),
     rlang,
     sf,
-    terra
+    terra,
+    tidyr
 Suggests: 
     curl,
     grDevices,

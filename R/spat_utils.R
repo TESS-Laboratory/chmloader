@@ -196,3 +196,19 @@ terra_corner_method <- function(x) {
   rownames(x) <- NULL
   x
 }
+
+#' get the dimensions of a bounding box
+#' @param bbox numeric. A bounding box.
+#' @param res numeric. The resolution of the bounding box.
+#' @param dim character. The dimension to return.
+#' @return numeric. The dimension of the bounding box.
+#' @noRd
+#' @keywords internal
+box_dim <- function(bbox, res, dim = c("x", "y")) {
+  dim <- rlang::arg_match(dim)
+  res <- if (length(res) == 1) rep(res, 2) else res
+  switch(dim,
+    x = (bbox[[3]] - bbox[[1]]) / res[[1]],
+    y = (bbox[[4]] - bbox[[2]]) / res[[2]]
+  )
+}

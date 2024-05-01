@@ -4,13 +4,12 @@
 #' @noRd
 #' @keywords internal
 chml_assert_class <- function(x, classes) {
-  obj_name <- deparse(substitute(x))
-  classes_str <- glue::glue(
-    glue::glue_collapse(classes[-length(classes)], sep = c(", ")),
-    " or ", classes[length(classes)]
-  )
-
   if (!any(class(x) %in% classes)) {
+    obj_name <- deparse(substitute(x))
+    classes_str <- glue::glue(
+      glue::glue_collapse(classes[-length(classes)], sep = c(", ")),
+      " or ", classes[length(classes)]
+    )
     cli::cli_abort(
       c("x" = "{.code {obj_name}} must be an object of class
           {.emph {.field {classes_str}}} class{?es}, not {.emph {.type {x}}}")

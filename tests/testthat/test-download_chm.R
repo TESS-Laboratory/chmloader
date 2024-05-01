@@ -2,6 +2,8 @@ test_that("download_chm works", {
   skip_on_cran()
   skip_if_offline()
 
+  chml_set_options(out_raster_type = "SpatRaster")
+
   gabon <- sf::st_point(c(9.5, -0.33)) |>
     sf::st_sfc(crs = 4326) |>
     sf::st_buffer(200) |>
@@ -11,12 +13,21 @@ test_that("download_chm works", {
     gabon,
     filename = tempfile(fileext = ".tif")
   )
-  expect_type(gabon_chm, "character")
+  expect_s4_class(gabon_chm, "SpatRaster")
 
-  gabon_chm <- terra::rast(gabon_chm)
   mm <- terra::minmax(gabon_chm, compute = TRUE)
   expect_equal(mm[1], 0)
   expect_equal(mm[2], 29)
+
+  chml_set_options(out_raster_type = "character")
+
+  expect_equal(getOption("chmloader.out_raster_type"), "character")
+
+  gabon_chm <- download_chm(
+    gabon,
+    filename = tempfile(fileext = ".tif")
+  )
+  expect_type(gabon_chm, "character")
 })
 
 test_that("download_chm warning on lonlat", {
