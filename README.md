@@ -38,7 +38,7 @@ This is a basic example which shows you how to download some data. The
 `download_chm` function uses
 [gdalwarp](https://gdal.org/programs/gdalwarp.html) (via
 [`sf::gdal_utils`](https://r-spatial.github.io/sf/reference/gdal_utils.html))
-to efficiently retrieve only the required data from across multiple
+to efficiently retrieve only the required data from multiple
 tiles - the default resolution is 1 m but this can be reprojected as
 needed using the `res` argument.
 
@@ -60,12 +60,12 @@ terra::plot(sundarbans_chm, col = hcl.colors(256, "viridis"))
 
 This package also provides a simple function to create a plots for
 comparing different CHMs. The intention of this function is to enable
-robust a simple evaluation of the Tolan et al. (2024) CHM data with
+simple and robust evaluation of the Tolan et al. (2024) CHM data with
 LiDAR-based models and other ML-derived products. The chmloader package
-comes with a small set of LiDAR-based CHM example dataset, derived from
+comes with a small set of LiDAR-based CHM example datasets, derived from
 the English Environment Agency’s [Vegetation Object Model
 dataset](https://www.data.gov.uk/dataset/227ab487-e8f2-4cbb-b26a-9e6d3b662265/lidar-vegetation-object-model-vom)
-Below is an example using one of these excample datasets from Fingle
+Below is an example using one of these example datasets from Fingle
 Woods, Devon, UK:
 
 ``` r
@@ -79,7 +79,7 @@ compare_models(fingle_woods, aggregate = 10, drop_zeros = TRUE)
 <img src="man/figures/README-example2-1.png" width="100%" /><img src="man/figures/README-example2-2.png" width="100%" />
 
 Note in this example, the `aggregate` argument is used to reduce the
-resolution of both the refernce and Meta/WRI CHM by a factor of 10
+resolution of both the reference and Meta/WRI CHM by a factor of 10
 (resulting in a 10 m model) and test both this coarser scale model in
 addition to the original 1 m model. This functionality may help to
 reveal what the true resolution of the Meta/WRI CHM is, and how it
