@@ -60,8 +60,11 @@ download_chm <- function(
   check_existing_cog(filename, gdalwarp_options)
 
   if (sf::st_is_longlat(target)) {
-    target <- proj_to_web_merc(target)
-    cli::cli_warn(c("!" = "target is in longlat, transforming to EPSG:3857"))
+    cond <- inherits(target, "SpatRaster") && is.null(res)
+    if (!cond) {
+      target <- proj_to_web_merc(target)
+      cli::cli_warn(c("!" = "target is in longlat, transforming to EPSG:3857"))
+    }
   }
 
   srcs <- build_chm_srcs(target)
