@@ -17,9 +17,9 @@ Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://o
 The goal of chmloader is to download the Canopy Height Model (CHM) data
 from this recent work by [Tolan et
 al. (2024)](https://www.sciencedirect.com/science/article/pii/S003442572300439X).
-A high level summary of this work can be found
+A high-level summary of this work can be found
 [here](https://sustainability.fb.com/blog/2024/04/22/using-artificial-intelligence-to-map-the-earths-forests/).
-The data is downloaded from aws s3 storage - further details on the
+The data is downloaded from AWS s3 storage - further details on the
 bucket can be found
 [here](https://registry.opendata.aws/dataforgood-fb-forests/)
 
