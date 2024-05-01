@@ -4,9 +4,5 @@
 .httr-oauth
 .DS_Store
 
-*.tif
-*.aux.xml
-*.png
-
 DEV/*
 README.html
