@@ -263,6 +263,9 @@ plot_wrapper <- function(r1, r2, fill_trans, title, dz, n) {
 #'
 #' @examplesIf interactive()
 #'
+#' wist_wood <- reference_data("wistmans_wood")
+#' compare_models(wist_wood, aggregate = 10, drop_zeros = TRUE)
+#'
 #' @export
 compare_models <- function(
     r1, r2,

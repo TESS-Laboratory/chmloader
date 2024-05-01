@@ -3,7 +3,7 @@
 \name{download_chm}
 \alias{download_chm}
 \title{Download Canopy Height Model (CHM) data
-Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.}
+Downloads CHM data from the Tolan et al. (2023) dataset by meta and WRI.}
 \usage{
 download_chm(
   target,
@@ -21,11 +21,12 @@ download_chm(
 )
 }
 \arguments{
-\item{target}{sf or sfc object, the target area to download CHM data for}
+\item{target}{sf, sfc, SpatVector or SpatRaster object, the target area to
+download CHM data for. See details.}
 
 \item{chm}{character, the CHM dataset to download, for now this must be "tolan"}
 
-\item{res}{numeric, the resolution of the CHM data to download in meters. see details}
+\item{res}{numeric, the resolution of the CHM data to download in meters. See details.}
 
 \item{filename}{character, the filename to save the downloaded CHM data to}
 
@@ -38,7 +39,7 @@ character, the path to the downloaded CHM data
 }
 \description{
 Download Canopy Height Model (CHM) data
-Downloads CHM data from the Tolan et al. (2023) dataset by meta nd WRI.
+Downloads CHM data from the Tolan et al. (2023) dataset by meta and WRI.
 }
 \details{
 for more information check out: https://registry.opendata.aws/dataforgood-fb-forests/
@@ -46,13 +47,18 @@ If the target sf object is provided in longlat, it will be transformed to
 EPSG:3857 (Web Mercator) before downloading the CHM data. This is in part
 because the data is provided in Web Mercator and because calcuating the
 correct resolution of the data is made simpler when using a projected
-coordinate system.
+coordinate system. If the target is a SpatRaster object and no res argument
+is provided, the resolution of the CHM data will be the same as the target
+raster. If the target is a SpatRaster object and a res argument is provided,
+the CHM data will be reprojected to pseudo-Web Mercator and resampled to the
+requested resolution.
 
 When the \code{res} argument is NULL (the default), the CHM resolution will be 1
-meter if the target is a spatial vector (either sf, sfc or SpatVector. If
+meter if the target is a spatial vector (either sf, sfc or SpatVector); any
+numeric can also be provided to resample the CHM to a desired resolution. If
 the target is a SpatRaster object, the resolution will be the same as the
-target raster. If the \code{res} argument is provided, the CHM data will be
-resampled to the requested resolution.
+target raster unless the \code{res} argument is provided; in which case the CHM
+data will be resampled to the requested resolution.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

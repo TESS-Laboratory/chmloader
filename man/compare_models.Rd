@@ -78,5 +78,8 @@ the results.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
+wist_wood <- reference_data("wistmans_wood")
+compare_models(wist_wood, aggregate = 10, drop_zeros = TRUE)
 \dontshow{\}) # examplesIf}
 }

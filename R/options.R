@@ -1,4 +1,5 @@
-#' helper function to safely set chmloader options
+#' Safely set chmloader options
+#' Helper function to safely set chmloader options such as the output raster type
 #' @param out_raster_type character, the output raster type
 #' @return NULL
 #' @details This function can be used to set specific options for the chmloader

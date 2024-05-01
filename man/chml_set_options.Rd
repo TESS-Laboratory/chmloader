@@ -2,7 +2,8 @@
 % Please edit documentation in R/options.R
 \name{chml_set_options}
 \alias{chml_set_options}
-\title{helper function to safely set chmloader options}
+\title{Safely set chmloader options
+Helper function to safely set chmloader options such as the output raster type}
 \usage{
 chml_set_options(out_raster_type = c("SpatRaster", "character"))
 }
@@ -10,7 +11,8 @@ chml_set_options(out_raster_type = c("SpatRaster", "character"))
 \item{out_raster_type}{character, the output raster type}
 }
 \description{
-helper function to safely set chmloader options
+Safely set chmloader options
+Helper function to safely set chmloader options such as the output raster type
 }
 \details{
 This function can be used to set specific options for the chmloader

@@ -25,9 +25,9 @@ biomes <- function() {
 #' Vegetation Object Model (VOM). See https://www.data.gov.uk/dataset/227ab487-e8f2-4cbb-b26a-9e6d3b662265/lidar-vegetation-object-model-vom
 #' for more information. If you want to explore these data further in R, check
 #' out the gblidar package at: https://github.com/h-a-graham/gblidar
-#' @export
 #' @examplesIf interactive()
 #' wistmans_wood <- load_chm_data("wistmans_wood")
+#' @export
 reference_data <- function(name = c("wistmans_wood", "fingle_woods", "new_forest")) {
   name <- rlang::arg_match(name)
   pth <- switch(name,
