@@ -90,4 +90,4 @@ both the 2d density plot and the derived statistics, where values from
 the reference/benchmark data and the Meta/WRI CHM are both zero. This is
 particularly useful where the main interest is to evaluate the tree
 canopy rather than the absence of trees and/or where tree cover is
-sparse.
+sparse; however, the drop_zeros argument can be set to false if preferred.  
