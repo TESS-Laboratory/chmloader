@@ -7,11 +7,12 @@
 two_ras_df <- function(r1, r2) {
   names(r1) <- "benchmark_chm"
   names(r2) <- "meta_chm"
-  purrr::map(
-    list(r1, r2),
-    ~ as.data.frame(.x, xy = TRUE)
+
+  purrr::map2(
+    list(r1, r2), c(TRUE, FALSE),
+    ~ as.data.frame(.x, xy = .y, cells = TRUE)
   ) |>
-    purrr::reduce(~ dplyr::left_join(.x, .y, by = c("x", "y")))
+    purrr::reduce(~ dplyr::left_join(.x, .y, by = dplyr::join_by(cell)))
 }
 
 #' plot a map of two rasters from a df
@@ -57,8 +58,8 @@ two_ras_map <- function(ras_df) {
 density_2d <- function(
     df,
     fill_trans,
-    n = 100,
-    dz = TRUE) {
+    n,
+    dz) {
   trans_func <- switch(fill_trans,
     "sqrt" = sqrt,
     "log" = log,
@@ -73,18 +74,28 @@ density_2d <- function(
     "identity" = "density"
   )
 
-  em <- error_mets(df$benchmark_chm, df$meta_chm)
   if (dz) {
     df <- df |>
       dplyr::filter(!(benchmark_chm == 0 & meta_chm == 0))
   }
 
+  em <- error_mets(df$benchmark_chm, df$meta_chm)
+
+  footnote <- bquote(
+    ~ R^2:~ .(em["rsq"]) ~ "| "
+    ~ RMSE:~ .(em["rmse"]) ~ "| "
+    ~ MAE:~ .(em["mae"])
+  )
+  if (dz) {
+    footnote <- bquote(.(footnote) ~ "| "
+    ~ "* values that are zero in both datasets are omitted")
+  }
 
   ggplot2::ggplot(df) +
     ggplot2::aes(x = benchmark_chm, y = meta_chm) +
     ggplot2::stat_density2d(
       ggplot2::aes(fill = trans_func(ggplot2::after_stat(density))),
-      geom = "raster", contour = FALSE, n = n, alpha = 0.7 # , h = c(1, 1)
+      geom = "raster", contour = FALSE, n = n, alpha = 0.7
     ) +
     ggplot2::scale_fill_gradientn(
       colors = hcl.colors(100, palette = "mako", rev = TRUE)
@@ -95,12 +106,8 @@ density_2d <- function(
     ) +
     ggplot2::theme_light() +
     ggplot2::labs(
-      caption = bquote(
-        ~ R^2:~ .(em["rsq"]) ~ "| "
-        ~ RMSE:~ .(em["rmse"]) ~ "| "
-        ~ MAE:~ .(em["mae"])
-      ),
-      x = "benchmark Canopy Height (m)",
+      caption = footnote,
+      x = "Benchmark Canopy Height (m)",
       y = "Meta/WRI Canopy Height (m)",
       fill = legend_lab
     )
@@ -169,53 +176,124 @@ get_biome_n_cont <- function(r) {
 #' @keywords internal
 #' @import patchwork
 stack_plots <- function(p1, p2, g_att, rr, r_units, title) {
-  p1 / p2 +
-    patchwork::plot_annotation(
-      title = title,
-      subtitle = glue::glue(
-        "Continent: {g_att['cont_name']}
+  sub_t <- glue::glue(
+    "Continent: {g_att['cont_name']}
     Biome: {g_att['biome_name']}
     Cell size: {rr[1]} x {rr[2]} {r_units}"
-      ),
-    )
+  )
+
+  p1 / p2 + patchwork::plot_annotation(
+    title = title,
+    subtitle = sub_t
+  )
 }
+
+#' get the missing meta/WRI CHM
+#' @param r a SpatRaster object
+#' @return a SpatRaster object
+#' @noRd
+#' @keywords internal
+get_missing_r2 <- function(r) {
+  chml_opt <- getOption("chmloader.out_raster_type")
+  on.exit(chml_set_options(out_raster_type = chml_opt))
+  chml_set_options(out_raster_type = "SpatRaster")
+  cli::cli_alert_info("meta/WRI CHM not provided, downloading now...")
+  r2 <- download_chm(r, filename = tempfile(fileext = ".tif"))
+  cli::cli_alert_success("CHM downloaded successfully!")
+  return(r2)
+}
+
+plot_wrapper <- function(r1, r2, fill_trans, title, dz, n) {
+  comp_ras_df <- two_ras_df(r1, r2)
+  gmap <- two_ras_map(comp_ras_df)
+  valplot <- density_2d(comp_ras_df, fill_trans, n, dz)
+  geo_attrs <- suppressMessages(get_biome_n_cont(r1))
+  ras_res <- round(terra::res(r2), 6)
+  crs_units <- sf::st_crs(r2)$units
+  ras_units <- ifelse(is.null(crs_units), "degrees", crs_units)
+  stack_plots(gmap, valplot, geo_attrs, ras_res, ras_units, title)
+}
+
 
 #' Standardised plot to compare two Canopy Height Models
 #' Create a multi-panel plot showing the benchmark raster alongside the
 #' meta/WRI raster, and a 2D density plot of the correspondence between the two
 #' rasters.
 #' @param r1 a SpatRaster object, The benchmark raster (user provided)
-#' @param r2 a SpatRaster object, The meta/WRI raster
+#' @param r2 a SpatRaster object, The meta/WRI raster. If this is not provided,
+#' the function will download the missing raster for the area coincident with
+#' `r1`.
 #' @param fill_trans a character string of the transformation to apply to the
 #' density colour gradient.
 #' @param title a character string of the plot title
 #' @param drop_zeros a logical, whether to drop zeros from the 2D density plot
-#' dataframe when both the benchmark and meta/WRI CHM are zero. default is TRUE
-#' @return a ggplot object
+#' dataframe and comparative statistics. If TRUE, when both the benchmark and
+#' meta/WRI CHM are zero, these rows are removed. useful when there is a lot
+#' of bare ground. default is TRUE
+#' @param aggregate a numeric vector of the factors to aggregate the rasters by.
+#' default is NULL in which case the CHMs are compared only at the native
+#' resolution of `r1`. the aggregate factor is relative to the native resolution
+#' of the rasters. see `terra::aggregate` for more details. Multiple numeric
+#' values can be provided to compare the rasters at many different resolutions.
+#' @param n_2d an integer, Number of grid points in each direction for the 2D
+#' density. default is 100. see `ggplot::stat_density2d` for more details.
+#' @return a ggplot object if `aggregate` is NULL, otherwise a list of ggplot
+#' objects.
+#' @details This function provides a standardised way to evaluate the accuracy
+#' of two canopy height models (or indeed any two rasters with equal
+#' dimensions).
+#'
+#' The new Tolan, et al. (2024) global CHM presents a step change
+#' in forest mapping. With this change comes some potential issues and varying
+#' performance, but given how new these data are and the global extent, it
+#' is challeging to develop a comprehensive evaluation. This
+#' function offers a means by which to quickly and easily compare these data
+#' with existing CHMs, derived either from LiDAR or through Machine Learning
+#' workflows.
+#'
+#' We hope that this function can help us collectively learn more about the
+#' relative merits of this dataset and how we may use it and the underlying
+#' models (see https://github.com/facebookresearch/HighResCanopyHeight) to
+#' improve our understanding of forest structure and function.
+#'
+#' The plot generates some general location information for the target area
+#' including the continent and biome. Further information can be added to the
+#' `title` argument if desired. We hope this reduces any barriers to sharing
+#' the results.
+#'
+#' @examplesIf interactive()
+#'
 #' @export
-comparison_plot <- function(
+compare_models <- function(
     r1, r2,
     fill_trans = c("sqrt", "identity", "log", "log10"),
     title = "",
-    drop_zeros = TRUE) {
+    aggregate = NULL,
+    drop_zeros = FALSE,
+    n_2d = 100) {
   chml_assert_class(r1, "SpatRaster")
+
   if (missing(r2)) {
-    chml_opt <- getOption("chmloader.out_raster_type")
-    on.exit(chml_set_options(out_raster_type = chml_opt))
-    chml_set_options(out_raster_type = "SpatRaster")
-    cli::cli_alert_info("meta/WRI CHM not provided, downloading now...")
-    r2 <- download_chm(r1, filename = tempfile(fileext = ".tif"))
-    cli::cli_alert_success("CHM downloaded successfully!")
+    r2 <- get_missing_r2(r1)
   }
+
   chml_assert_class(r2, "SpatRaster")
   chml_assert_class(title, "character")
+  chml_assert_class(drop_zeros, "logical")
+  chml_assert_class(aggregate, c("numeric", "NULL"))
+  chml_assert_class(n_2d, "numeric")
   fill_trans <- rlang::arg_match(fill_trans)
-  comp_ras_df <- two_ras_df(r1, r2)
-  gmap <- two_ras_map(comp_ras_df)
-  valplot <- density_2d(comp_ras_df, fill_trans)
-  geo_attrs <- suppressMessages(get_biome_n_cont(r1))
-  ras_res <- terra::res(r2)
-  crs_units <- sf::st_crs(r2)$units
-  ras_units <- ifelse(is.null(crs_units), "degrees", crs_units)
-  stack_plots(gmap, valplot, geo_attrs, ras_res, ras_units, title)
+
+  ph <- plot_wrapper(r1, r2, fill_trans, title, drop_zeros, n_2d)
+
+  if (!is.null(aggregate)) {
+    pl <- purrr::map(aggregate, function(.x) {
+      rr1 <- terra::aggregate(r1, fact = .x)
+      rr2 <- terra::aggregate(r2, fact = .x)
+      plot_wrapper(rr1, rr2, fill_trans, title, drop_zeros, n_2d)
+    })
+    return(c(list(ph), pl))
+  } else {
+    return(ph)
+  }
 }

@@ -29,13 +29,16 @@ warp_util <- function(
     res <- c(res, res)
   }
 
+  dim_x <- box_dim(bbox, res, "x")
+  dim_y <- box_dim(bbox, res, "y")
+
   te_srs <- get_proj(target)
 
   gdalwarp_options <- c(
     gdalwarp_options,
     "-te", bbox,
     "-t_srs", te_srs,
-    "-tr", res
+    "-ts", dim_x, dim_y
   )
 
   sf::gdal_utils("warp", srcs, filename,
