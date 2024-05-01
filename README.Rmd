@@ -67,7 +67,7 @@ LiDAR-based CHM example dataset, derived from the English Environment Agency's
 Below is an example using one of these excample datasets from Fingle Woods, 
 Devon, UK:
 
-```{r example2, warning=FALSE}
+```{r example2, warning=FALSE, results='hide', fig.keep='all'}
 fingle_woods <- reference_data("fingle_woods")
 
 compare_models(fingle_woods, aggregate = 10, drop_zeros = TRUE)
