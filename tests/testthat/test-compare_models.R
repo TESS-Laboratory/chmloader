@@ -1,4 +1,6 @@
 test_that("compare_models works", {
+  skip_on_cran()
+  skip_if_offline()
   wist_wood <- reference_data("wistmans_wood")
   expect_s4_class(wist_wood, "SpatRaster")
   ww_l <- compare_models(wist_wood, aggregate = 20, drop_zeros = TRUE)
