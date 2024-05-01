@@ -10,6 +10,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/TESS-Laboratory/chmloader/branch/main/graph/badge.svg)](https://app.codecov.io/gh/TESS-Laboratory/chmloader?branch=main)
+[![License:
+Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0)
 <!-- badges: end -->
 
 The goal of chmloader is to download the Canopy Height Model (CHM) data
