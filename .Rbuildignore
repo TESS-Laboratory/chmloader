@@ -5,5 +5,3 @@
 ^DEV
 ^\.github$
 ^data-raw$
-^\.tif$
-^\.png$
