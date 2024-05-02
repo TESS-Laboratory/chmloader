@@ -19,7 +19,6 @@ Imports:
     patchwork,
     proceduralnames,
     purrr,
-    quadkeyr (>= 0.1.0),
     rlang,
     sf,
     terra,
@@ -29,8 +28,6 @@ Suggests:
     curl,
     grDevices,
     testthat (>= 3.0.0)
-Remotes: 
-    ropensci/quadkeyr
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 
