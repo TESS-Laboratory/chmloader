@@ -138,65 +138,6 @@ proj_to_web_merc.sfc <- function(x) {
   sf::st_transform(x, 3857)
 }
 
-#' get bounding box corner coordinates
-#' @param x A spatial object
-#' @return a dataframe with the corner coordinates
-#' @noRd
-#' @keywords internal
-get_spat_corners <- function(x) {
-  UseMethod("get_spat_corners")
-}
-
-#' @export
-get_spat_corners.SpatRaster <- function(x) {
-  terra_corner_method(x)
-}
-
-#' @export
-get_spat_corners.SpatVector <- function(x) {
-  terra_corner_method(x)
-}
-
-#' @export
-get_spat_corners.sf <- function(x) {
-  sf_corner_method(x)
-}
-
-#' @export
-get_spat_corners.sfc <- function(x) {
-  sf_corner_method(x)
-}
-
-#' extract corners from an sf object
-#' @param x an sf or sfc object
-#' @return a dataframe with the corner coordinates
-#' @noRd
-#' @keywords internal
-sf_corner_method <- function(x) {
-  x <- sf::st_transform(x, 4326) |>
-    sf::st_bbox() |>
-    sf::st_as_sfc() |>
-    sf::st_coordinates() |>
-    as.data.frame()
-  x[c("X", "Y")]
-}
-
-#' extract corners from a terra object
-#' @param x a SpatVector or SpatRaster object
-#' @return a dataframe with the corner coordinates
-#' @noRd
-#' @keywords internal
-terra_corner_method <- function(x) {
-  x <- terra::project(x, "EPSG:4326") |>
-    terra::ext() |>
-    terra::vect()
-  x <- terra::geom(x, df = TRUE)[, c("x", "y")]
-  colnames(x) <- c("X", "Y")
-  x <- x[nrow(x):1, ]
-  rownames(x) <- NULL
-  x
-}
-
 #' get the dimensions of a bounding box
 #' @param bbox numeric. A bounding box.
 #' @param res numeric. The resolution of the bounding box.

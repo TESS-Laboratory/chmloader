@@ -1,6 +1,8 @@
 #' Load a spatial vector of contentinents
 #' Load a spatial vector of continents as an sf object
 #' @return an sf object of continents
+#' @noRd
+#' @keywords internal
 continents <- function() {
   sf::read_sf(
     system.file("continents/ne_continents.fgb", package = "chmloader")
@@ -10,9 +12,22 @@ continents <- function() {
 #' Load a spatial vector of eco-regions
 #' Load a spatial vector of eco-regions as an sf object
 #' @return an sf object of eco-regions
+#' @noRd
+#' @keywords internal
 biomes <- function() {
   sf::read_sf(
     system.file("biomes/eco_biomes.fgb", package = "chmloader")
+  )
+}
+
+#' load the the local copy of the tiles.geojson file
+#' the file has been converted to a a zipped fgb file
+#' @return an sf object of tiles
+#' @noRd
+#' @keywords internal
+load_tiles <- function() {
+  sf::read_sf(
+    paste0("/vsizip/", system.file("tiles/tiles.zip", package = "chmloader"))
   )
 }
 
