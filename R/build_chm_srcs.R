@@ -4,28 +4,14 @@
 #' @noRd
 #' @keywords internal
 build_chm_srcs <- function(target) {
-  target_corners <- get_spat_corners(target)
+  gtiles <- load_tiles()
 
-  kuam_cent_qk <- quadkeyr::latlong_to_quadkey(
-    lat = target_corners$Y, lon = target_corners$X, zoom = 9
-  )
+  t_ext <- get_ext(target) |>
+    sf::st_bbox(crs = get_proj(target)) |>
+    sf::st_as_sfc() |>
+    sf::st_transform(4326)
 
-  qk <- unique(kuam_cent_qk$quadkey)
-
-  if (length(qk) > 3) {
-    # this catches when the target area intersects more than 3 tiles, in this
-    # case we can build a quadkey grid with thes corner coords and extract all
-    # intersecting tiles.
-    box <- get_ext(target) |>
-      sf::st_bbox() |>
-      sf::st_as_sfc() |>
-      sf::st_set_crs(get_proj(target)) |>
-      sf::st_transform(4326) |>
-      sf::st_bbox()
-
-    qkg <- quadkeyr::create_qk_grid(box[1], box[3], box[2], box[4], zoom = 9)
-    qk <- qkg$data$quadkey
-  }
+  qk <- sf::st_filter(gtiles, t_ext)$tile
 
   paste("/vsis3",
     "dataforgood-fb-data", "forests/v1/alsgedi_global_v6_float/chm",
