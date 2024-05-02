@@ -45,15 +45,15 @@ the `res` argument.
 ``` r
 library(chmloader)
 
-sundarbans <- sf::st_point(c(89.2, 22.0)) |>
+parana_cuiana <- sf::st_point(c(-61.89, -4.12)) |>
   sf::st_sfc(crs = 4326) |>
-  sf::st_buffer(1000)
+  sf::st_buffer(3000)
 
-sundarbans_chm <- download_chm(
-  sundarbans,
+pc_chm <- download_chm(
+  parana_cuiana,
   filename = tempfile(fileext = ".tif")
 )
-terra::plot(sundarbans_chm, col = hcl.colors(256, "viridis"))
+terra::plot(pc_chm, col = hcl.colors(256, "viridis"))
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
