@@ -15,6 +15,9 @@ knitr::opts_chunk$set(
 
 # chmloader
 
+<img src="man/figures/chmloader-hex.png"  align="right" height="300" style="float:right; height:300px;">
+
+
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Permian-Global-Research/chmloader/actions/workflows/R-CMD-check.yaml)

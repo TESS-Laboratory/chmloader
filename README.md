@@ -3,6 +3,8 @@
 
 # chmloader
 
+<img src="man/figures/chmloader-hex.png"  align="right" height="300" style="float:right; height:300px;">
+
 <!-- badges: start -->
 
 [![Lifecycle:
