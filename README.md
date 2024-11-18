@@ -3,7 +3,7 @@
 
 # chmloader
 
-<img src="man/figures/chmloader-hex.png"  align="right" height="300" style="float:right; height:300px;">
+<img src="man/figures/chmloader-hex.png"  align="right" height="300" style="float:right; height:160px;">
 
 <!-- badges: start -->
 
